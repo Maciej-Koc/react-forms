@@ -1,48 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 
 const SimpleInput = (props) => {
   const [enteredName, setEnteredName] = React.useState("");
-  const [enteredNameisValid, setEnteredNameisValid] = useState(true);
-  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
-  const nameInputRef = React.useRef();
+  const [enteredNameTouched, setEnteredNameTouched] = React.useState(false);
+
+  const enteredNameIsValid = enteredName.trim() !== "";
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
   function nameInputChangeHandler(event) {
-    return setEnteredName(event.target.value);
+    setEnteredName(event.target.value);
+  }
+
+  function nameInputBlurHandler(event) {
+    setEnteredNameTouched(true);
   }
 
   function formSubmissionHandler(event) {
     event.preventDefault();
     setEnteredNameTouched(true);
 
-    if (enteredName.trim() === "") {
-      setEnteredNameisValid(false);
-      return; //Cancels function exection
+    if (!enteredNameIsValid) {
+      return;
     }
 
-    setEnteredNameisValid(true);
+    setEnteredName("");
+    setEnteredNameTouched(false);
   }
-
-  const nameInputIsInvalid = !enteredNameisValid && enteredNameTouched;
 
   const nameInputClasses = nameInputIsInvalid
     ? "form-control invalid"
     : "form-control";
-
-  function nameInputBlurHandler(event) {
-    setEnteredNameTouched(true);
-
-    if (enteredName.trim() === "") {
-      setEnteredNameisValid(false);
-      return; //Cancels function exection
-    }
-  }
 
   return (
     <form onSubmit={formSubmissionHandler}>
       <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
-          ref={nameInputRef}
           type="text"
           id="name"
           onBlur={nameInputBlurHandler}
